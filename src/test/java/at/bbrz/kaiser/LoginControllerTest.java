@@ -11,7 +11,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -55,7 +54,7 @@ class LoginControllerTest {
     @Test
     void testTryLoginFromJson_succeeds() throws Exception {
         User user = new User("testuser", "password");
-        Mockito.when(loginService.couldLoginWith(user.getName(), user.getPassword())).thenReturn(true);
+        Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(true);
 
         mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
