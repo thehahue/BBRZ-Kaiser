@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class LoginController {
 
-    private final LoginService loginService = new LoginService();
+    private final LoginService loginService;
+
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
 
 
     @PostMapping("/test")
-    @ResponseBody
-    public ResponseEntity<String> tryLogin(@RequestParam(name = "name") String name, @RequestParam(name = "password") String password) {
+    public ResponseEntity<String> tryLogin(@RequestParam String name, @RequestParam String password) {
         if (loginService.couldLoginWith(name, password)) {
             return ResponseEntity.ok("OK");
         }
