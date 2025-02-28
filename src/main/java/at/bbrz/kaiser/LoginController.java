@@ -12,8 +12,9 @@ public class LoginController {
     private final LoginService loginService = new LoginService();
 
 
-    @GetMapping("/login?name={name}&pw={password}")
-    public ResponseEntity<String> tryLogin(@PathVariable String name, @PathVariable String password) {
+    @PostMapping("/test")
+    @ResponseBody
+    public ResponseEntity<String> tryLogin(@RequestParam(name = "name") String name, @RequestParam(name = "password") String password) {
         if (loginService.couldLoginWith(name, password)) {
             return ResponseEntity.ok("OK");
         }
