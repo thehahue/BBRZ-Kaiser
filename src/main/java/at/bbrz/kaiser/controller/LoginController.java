@@ -2,6 +2,7 @@ package at.bbrz.kaiser.controller;
 
 import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.service.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class LoginController {
 
+    @Autowired
     private final LoginService loginService;
 
     public LoginController(LoginService loginService) {
