@@ -24,7 +24,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<String> tryLoginFromJson(@RequestBody User user) {
-        if (loginService.couldLoginWith(user.getname(), user.getpassword)) {
+        if (loginService.couldLoginWith(user.getName(), user.getPassword())) {
             return ResponseEntity.ok("OK");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed!");
