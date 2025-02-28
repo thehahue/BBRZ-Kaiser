@@ -39,6 +39,42 @@ class LoginServiceTest {
         assertFalse(canLogin);
     }
 
+    @Test
+    void loginShouldFail_WithEmptyStrings() {
+        boolean canLogin = canLogin("", "");
+        assertFalse(canLogin);
+    }
+
+    @Test
+    void loginShouldBeCaseSensitive() {
+        boolean canLogin = canLogin("Dave", "pass");
+        assertFalse(canLogin);
+    }
+
+    @Test
+    void loginShouldFail_WithExtraSpaces() {
+        boolean canLogin = canLogin(" dave", "pass");
+        assertFalse(canLogin);
+
+        canLogin = canLogin("dave ", "pass");
+        assertFalse(canLogin);
+
+        canLogin = canLogin("dave", " pass");
+        assertFalse(canLogin);
+
+        canLogin = canLogin("dave", "pass ");
+        assertFalse(canLogin);
+    }
+
+    @Test
+    void loginShouldFail_WithOnlyOneGivenParameter() {
+        boolean canLogin = canLogin("dave", null);
+        assertFalse(canLogin);
+
+        canLogin = canLogin(null, "pass");
+        assertFalse(canLogin);
+    }
+
     private boolean canLogin(String user, String password) {
         return loginService.couldLoginWith(user, password);
     }
