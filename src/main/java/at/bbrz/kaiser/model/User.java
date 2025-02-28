@@ -1,4 +1,4 @@
-package at.bbrz.kaiser;
+package at.bbrz.kaiser.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

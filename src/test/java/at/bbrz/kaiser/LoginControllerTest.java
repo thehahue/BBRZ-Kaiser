@@ -1,5 +1,7 @@
 package at.bbrz.kaiser;
 
+import at.bbrz.kaiser.controller.LoginController;
+import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.service.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -66,7 +68,7 @@ class LoginControllerTest {
     @Test
     void testTryLoginFromJson_fails() throws Exception {
         User user = new User("testuser", "password");
-        Mockito.when(loginService.couldLoginWith(user.getName(), user.getPassword())).thenReturn(false);
+        Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(false);
 
         mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)

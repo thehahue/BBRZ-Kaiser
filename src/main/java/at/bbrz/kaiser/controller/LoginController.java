@@ -1,5 +1,6 @@
-package at.bbrz.kaiser;
+package at.bbrz.kaiser.controller;
 
+import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.service.LoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
