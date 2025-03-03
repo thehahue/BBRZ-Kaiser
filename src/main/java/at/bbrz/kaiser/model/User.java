@@ -10,6 +10,9 @@ import lombok.*;
 @Builder
 @Table(name = "users") // Changed Table-Name because H2 has already a "user" table
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String name;
     private String password;
 }
