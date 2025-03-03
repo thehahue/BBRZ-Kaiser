@@ -1,10 +1,14 @@
 package at.bbrz.kaiser.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 
+@Entity
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Builder
+@Table(name = "users") // Changed Table-Name because H2 has already a "user" table
 public class User {
     private String name;
     private String password;
