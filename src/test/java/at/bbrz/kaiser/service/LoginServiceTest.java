@@ -1,19 +1,24 @@
 package at.bbrz.kaiser.service;
 
-import org.junit.jupiter.api.BeforeEach;
+import at.bbrz.kaiser.model.User;
+import at.bbrz.kaiser.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class LoginServiceTest {
 
+    @InjectMocks
     private LoginService loginService;
 
-
-    @BeforeEach
-    void setUp() {
-        loginService = new LoginService();
-    }
+    @Mock
+    private UserRepository userRepository;
 
     @Test
     void loginShouldFail_WithWrongUserOrPassword() {
@@ -23,7 +28,10 @@ class LoginServiceTest {
 
     @Test
     void loginSuccess_WithCorrectUserAndPassword() {
-        boolean canLogin = canLogin("dave", "pass");
+        Mockito.when(userRepository.findByNameAndPassword("user", "password")).thenReturn(User.builder()
+                .name("user")
+                .password("password").build());
+        boolean canLogin = canLogin("user", "password");
         assertTrue(canLogin);
     }
 
@@ -34,8 +42,8 @@ class LoginServiceTest {
     }
 
     @Test
-    void loginShouldFail_WithCorrectUserAndWrongPassword() {
-        boolean canLogin = canLogin("dave", "pas");
+    void loginShouldFail_WithCorrectUsernameAndWrongPassword() {
+        boolean canLogin = canLogin("user", "pas");
         assertFalse(canLogin);
     }
 
@@ -47,35 +55,38 @@ class LoginServiceTest {
 
     @Test
     void loginShouldBeCaseSensitive() {
-        boolean canLogin = canLogin("Dave", "pass");
+        boolean canLogin = canLogin("User", "password");
         assertFalse(canLogin);
     }
 
     @Test
     void loginShouldFail_WithExtraSpaces() {
-        boolean canLogin = canLogin(" dave", "pass");
+        loginSuccess_WithCorrectUserAndPassword();
+
+        boolean canLogin = canLogin(" user", "password");
         assertFalse(canLogin);
 
-        canLogin = canLogin("dave ", "pass");
+        canLogin = canLogin("user ", "password");
         assertFalse(canLogin);
 
-        canLogin = canLogin("dave", " pass");
+        canLogin = canLogin("user", " password");
         assertFalse(canLogin);
 
-        canLogin = canLogin("dave", "pass ");
+        canLogin = canLogin("user", "password ");
         assertFalse(canLogin);
     }
 
     @Test
     void loginShouldFail_WithOnlyOneGivenParameter() {
-        boolean canLogin = canLogin("dave", null);
+        boolean canLogin = canLogin("user", null);
         assertFalse(canLogin);
 
-        canLogin = canLogin(null, "pass");
+        canLogin = canLogin(null, "password");
         assertFalse(canLogin);
     }
 
     private boolean canLogin(String user, String password) {
         return loginService.couldLoginWith(user, password);
     }
+
 }
