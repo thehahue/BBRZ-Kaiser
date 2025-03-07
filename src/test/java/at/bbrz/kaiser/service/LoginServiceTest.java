@@ -23,23 +23,6 @@ class LoginServiceTest {
     @Mock
     private UserRepository userRepository;
 
-
-    @BeforeEach
-    void setUp() {
-
-    }
-
-    private void mockUserList() {
-        Mockito.when(userRepository.findAll()).thenReturn(List.of(
-                User.builder()
-                        .name("admin")
-                        .password("password").build()
-                , User.builder()
-                        .name("user")
-                        .password("password")
-                        .build()));
-    }
-
     @Test
     void loginShouldFail_WithWrongUserOrPassword() {
         mockUserList();
@@ -61,9 +44,9 @@ class LoginServiceTest {
     }
 
     @Test
-    void loginShouldFail_WithCorrectUserAndWrongPassword() {
+    void loginShouldFail_WithCorrectUsernameAndWrongPassword() {
         mockUserList();
-        boolean canLogin = canLogin("dave", "pas");
+        boolean canLogin = canLogin("user", "pas");
         assertFalse(canLogin);
     }
 
@@ -77,17 +60,17 @@ class LoginServiceTest {
     @Test
     void loginShouldBeCaseSensitive() {
         mockUserList();
-        boolean canLogin = canLogin("Dave", "pass");
+        boolean canLogin = canLogin("User", "password");
         assertFalse(canLogin);
     }
 
     @Test
     void loginShouldFail_WithExtraSpaces() {
         mockUserList();
-        boolean canLogin = canLogin(" dave", "pass");
+        boolean canLogin = canLogin(" user", "password");
         assertFalse(canLogin);
 
-        canLogin = canLogin("dave ", "pass");
+        canLogin = canLogin("user ", "password");
         assertFalse(canLogin);
 
         canLogin = canLogin("dave", " pass");
@@ -99,15 +82,26 @@ class LoginServiceTest {
 
     @Test
     void loginShouldFail_WithOnlyOneGivenParameter() {
-        boolean canLogin = canLogin("dave", null);
+        boolean canLogin = canLogin("user", null);
         assertFalse(canLogin);
 
-        canLogin = canLogin(null, "pass");
+        canLogin = canLogin(null, "password");
         assertFalse(canLogin);
     }
 
     private boolean canLogin(String user, String password) {
         return loginService.couldLoginWith(user, password);
+    }
+
+    private void mockUserList() {
+        Mockito.when(userRepository.findAll()).thenReturn(List.of(
+                User.builder()
+                        .name("admin")
+                        .password("password").build()
+                , User.builder()
+                        .name("user")
+                        .password("password")
+                        .build()));
     }
 
 }
