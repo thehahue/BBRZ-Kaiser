@@ -1,4 +1,4 @@
-FROM openjdk:23
+FROM openjdk:21
 LABEL authors="BBRZ-Java"
 
 COPY target/kaiser*.jar app.jar
