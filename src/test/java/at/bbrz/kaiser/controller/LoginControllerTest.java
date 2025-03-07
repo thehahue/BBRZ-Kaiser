@@ -1,6 +1,5 @@
-package at.bbrz.kaiser;
+package at.bbrz.kaiser.controller;
 
-import at.bbrz.kaiser.controller.LoginController;
 import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.service.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
