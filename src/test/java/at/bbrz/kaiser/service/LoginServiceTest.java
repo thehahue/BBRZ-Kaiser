@@ -22,7 +22,6 @@ class LoginServiceTest {
 
     @Test
     void loginShouldFail_WithWrongUserOrPassword() {
-        Mockito.when(userRepository.findByNameAndPassword("da", "pa")).thenReturn(null);
         boolean canLogin = canLogin("da", "pa");
         assertFalse(canLogin);
     }
@@ -44,31 +43,24 @@ class LoginServiceTest {
 
     @Test
     void loginShouldFail_WithCorrectUsernameAndWrongPassword() {
-        Mockito.when(userRepository.findByNameAndPassword("user", "pas")).thenReturn(null);
         boolean canLogin = canLogin("user", "pas");
         assertFalse(canLogin);
     }
 
     @Test
     void loginShouldFail_WithEmptyStrings() {
-        Mockito.when(userRepository.findByNameAndPassword("", "")).thenReturn(null);
         boolean canLogin = canLogin("", "");
         assertFalse(canLogin);
     }
 
     @Test
     void loginShouldBeCaseSensitive() {
-        Mockito.when(userRepository.findByNameAndPassword("User", "password")).thenReturn(null);
         boolean canLogin = canLogin("User", "password");
         assertFalse(canLogin);
     }
 
     @Test
     void loginShouldFail_WithExtraSpaces() {
-        Mockito.when(userRepository.findByNameAndPassword(" user", "password")).thenReturn(null);
-        Mockito.when(userRepository.findByNameAndPassword("user ", "password")).thenReturn(null);
-        Mockito.when(userRepository.findByNameAndPassword("user", " password")).thenReturn(null);
-        Mockito.when(userRepository.findByNameAndPassword("user", "password ")).thenReturn(null);
 
         boolean canLogin = canLogin(" user", "password");
         assertFalse(canLogin);
