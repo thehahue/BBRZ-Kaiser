@@ -5,7 +5,7 @@ import at.bbrz.kaiser.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 
 @Service
 public class LoginService {
@@ -17,7 +17,9 @@ public class LoginService {
         if (username == null || password == null) {
             return false;
         }
-        return loginData.containsKey(user) && loginData.get(user).equals(password);
+        List<User> users = userRepository.findAll();
+        User user = users.stream().filter(u -> u.getName().equals(username) && u.getPassword().equals(password)).findAny().orElse(null);
+        return user != null;
 
     }
 
