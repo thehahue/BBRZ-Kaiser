@@ -15,4 +15,3 @@ spring:
     console:
       path: /h2
       enabled: true
-      settings.web-allow-others: true
