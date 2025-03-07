@@ -61,6 +61,7 @@ class LoginServiceTest {
 
     @Test
     void loginShouldFail_WithExtraSpaces() {
+        loginSuccess_WithCorrectUserAndPassword();
 
         boolean canLogin = canLogin(" user", "password");
         assertFalse(canLogin);
