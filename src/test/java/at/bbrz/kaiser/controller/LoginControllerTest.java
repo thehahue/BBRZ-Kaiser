@@ -38,35 +38,6 @@ class LoginControllerTest {
 
 
     @Test
-    void testTryLogin_succeeds() throws Exception {
-        Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(true);
-
-        MvcResult mvcResult = mockMvc.perform(post("/test")
-                        .param("name", "testuser")
-                        .param("password", "password"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String[] splitToken = mvcResult.getResponse().getContentAsString().split("\\.");
-        assertEquals(3, splitToken.length);
-        assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", splitToken[0]);
-        assertTrue(splitToken[1].length() > 5);
-        assertTrue(splitToken[2].length() > 5);
-    }
-
-
-    @Test
-    void testTryLogin_fails() throws Exception {
-        Mockito.when(loginService.couldLoginWith("wronguser", "wrongpass")).thenReturn(false);
-
-        mockMvc.perform(post("/test")
-                        .param("name", "wronguser")
-                        .param("password", "wrongpass"))
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().string("Login failed!"));
-    }
-
-    @Test
     void testTryLoginFromJson_succeeds() throws Exception {
         User user = new User("testuser", "password");
         Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(true);
