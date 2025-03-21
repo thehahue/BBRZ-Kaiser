@@ -9,7 +9,9 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.Instant;
+
 @Service
 public class TokenService {
     private JWTWrapper jwtWrapper;
@@ -41,16 +43,10 @@ public class TokenService {
         return jwt;
     }
 
-    public Boolean validateToken(String token, String user) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256("Kaiser");
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("username", user)
-                    .build();
-            DecodedJWT decodedJWT = verifier.verify(token);
-            return true;
-        } catch (JWTVerificationException e) {
-            return false;
-        }
+    public Boolean validateToken(String token, String user) throws JWTVerificationException {
+        Algorithm algorithm = Algorithm.HMAC256("Kaiser");
+        JWTVerifier verifier = JWT.require(algorithm).withClaim("username", user).build();
+        verifier.verify(token);
+        return true;
     }
 }
