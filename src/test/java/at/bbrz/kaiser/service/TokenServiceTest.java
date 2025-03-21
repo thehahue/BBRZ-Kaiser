@@ -55,7 +55,7 @@ class TokenServiceTest {
     }
 
     @Test
-    void test() {
+    void createToken_shouldThrowValidationExcpetion() {
         Mockito.when(jwtWrapper.createJWTToken(username, expiryDate)).thenThrow(new JWTCreationException("Bla", null));
         JWTValidationException jwtValidationException = assertThrows(JWTValidationException.class, () -> {
             tokenService.createToken(username, expiryDate);
