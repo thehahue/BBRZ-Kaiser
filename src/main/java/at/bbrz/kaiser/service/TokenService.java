@@ -43,10 +43,9 @@ public class TokenService {
         return jwt;
     }
 
-    public Boolean validateToken(String token, String user) throws JWTVerificationException {
+    public void validateToken(String token) throws JWTVerificationException {
         Algorithm algorithm = Algorithm.HMAC256("Kaiser");
-        JWTVerifier verifier = JWT.require(algorithm).withClaim("username", user).build();
+        JWTVerifier verifier = JWT.require(algorithm).build();
         verifier.verify(token);
-        return true;
     }
 }

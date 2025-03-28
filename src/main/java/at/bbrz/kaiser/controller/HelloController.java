@@ -32,7 +32,7 @@ public class HelloController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect Header");
         }
         try {
-            tokenService.validateToken(authHeaderSplit[1], "user");
+            tokenService.validateToken(authHeaderSplit[1]);
             return ResponseEntity.ok("Verified");
         } catch (JWTVerificationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Verified");

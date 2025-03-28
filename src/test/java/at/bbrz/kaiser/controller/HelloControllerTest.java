@@ -47,8 +47,6 @@ class HelloControllerTest {
     void secureEndpoint_ValidToken() throws Exception {
         String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjU3NDE5NDI1ODN9.0xkhKS8VKl-m4meKIEkd6-qXm_OZox1EkvWzNUTphLs";
 
-        Mockito.when(tokenService.validateToken(validToken, "user")).thenReturn(true);
-
         mockMvc.perform(post("/secureTest")
                 .header("Authorization", "Bearer " + validToken))
                 .andExpect(status().isOk())
@@ -59,8 +57,7 @@ class HelloControllerTest {
     void secureEndpoint_InvalidToken() throws Exception {
         String invalidToken = "invalid";
 
-        Mockito.when(tokenService.validateToken(invalidToken, "user"))
-                .thenThrow(JWTVerificationException.class);
+        Mockito.doThrow(JWTVerificationException.class).when(tokenService).validateToken(invalidToken);
 
         mockMvc.perform(post("/secureTest")
                         .header("Authorization", "Bearer " + invalidToken))

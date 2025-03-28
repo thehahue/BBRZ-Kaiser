@@ -65,45 +65,32 @@ class TokenServiceTest {
     }
 
     @Test
-    void validateTokenReturnTrueWithValidToken() {
-        String user = "user";
+    void validateTokenDoesNotThrowException() {
         String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjU3NDE5NDI1ODN9.0xkhKS8VKl-m4meKIEkd6-qXm_OZox1EkvWzNUTphLs";
-        Boolean validationResult = tokenService.validateToken(validToken, user);
-        assertTrue(validationResult);
+        tokenService.validateToken(validToken);
     }
 
     @Test
-    void validateTokenRetrunFalseWithInvalidToken() {
-        String user = "user";
+    void validateTokenThrowsExceptionWithInvalidToken() {
         assertThrows(JWTVerificationException.class, () -> {
-            tokenService.validateToken("test", user);
+            tokenService.validateToken("test");
         });
     }
 
     @Test
     void validateToken_failsWithExpiredDate() {
-        String user = "user";
         String invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDE5NDI1ODN9.q7OZfffwwH_U0k2j6oI1__mTgOw2R6JxNzYTllfQK_Q";
         assertThrows(JWTVerificationException.class, () -> {
-            tokenService.validateToken(invalidToken, user);
+            tokenService.validateToken(invalidToken);
         });
     }
 
-    @Test
-    void validateToken_failsWithIncorrectUser() {
-        String user = "incorrectUser";
-        String invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjc3NDE5NDI1ODN9.wBpLpzz1DRXGIudAkFOJyqt8pGR_tpV_Fck4h3FJm0M";
-        assertThrows(JWTVerificationException.class, () -> {
-            tokenService.validateToken(invalidToken, user);
-        });
-    }
 
     @Test
     void validateToken_failsWithIncorrectSignature() {
-        String user = "user";
         String invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjU3NDE5NDI1ODN9.qoXXnVlkQh4suvSL1EE-C1d7tzhxfUCc5obOn3uj-bE";
         assertThrows(JWTVerificationException.class, () -> {
-            tokenService.validateToken(invalidToken, user);
+            tokenService.validateToken(invalidToken);
         });
     }
 }
