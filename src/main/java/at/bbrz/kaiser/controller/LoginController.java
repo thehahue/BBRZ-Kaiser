@@ -1,5 +1,6 @@
 package at.bbrz.kaiser.controller;
 
+import at.bbrz.kaiser.model.LoginResponse;
 import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.service.LoginService;
 import at.bbrz.kaiser.service.TokenService;
@@ -24,12 +25,20 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-
+    @CrossOrigin
     @PostMapping("/login")
-    public ResponseEntity<String> tryLoginFromJson(@RequestBody User user) {
+    public ResponseEntity<LoginResponse> tryLoginFromJson(@RequestBody User user) {
         if (loginService.couldLoginWith(user.getName(), user.getPassword())) {
-            return ResponseEntity.ok(tokenService.createToken(user.getName(), Instant.now().plusSeconds(300)));
+            LoginResponse response = LoginResponse.builder()
+                    .token(tokenService.createToken(user.getName(), Instant.now().plusSeconds(300)))
+                    .message("Login Success")
+                    .success(true)
+                    .build();
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(LoginResponse.builder()
+                .message("Login failed")
+                .success(false)
+                .build());
     }
 }

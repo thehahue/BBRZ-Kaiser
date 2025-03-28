@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,11 +50,14 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String[] splitToken = mvcResult.getResponse().getContentAsString().split("\\.");
+        String result[] = mvcResult.getResponse().getContentAsString().split(",");
+        String[] splitToken = result[0].split("\\.");
         assertEquals(3, splitToken.length);
-        assertEquals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", splitToken[0]);
+        assertEquals("{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", splitToken[0]);
         assertTrue(splitToken[1].length() > 5);
         assertTrue(splitToken[2].length() > 5);
+        assertEquals("\"message\":\"Login Success\"", result[1]);
+        assertEquals("\"success\":true}", result[2]);
     }
 
     @Test
@@ -64,6 +69,6 @@ class LoginControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().string("Login failed!"));
+                .andExpect(content().string("{\"token\":null,\"message\":\"Login failed\",\"success\":false}"));
     }
 }
