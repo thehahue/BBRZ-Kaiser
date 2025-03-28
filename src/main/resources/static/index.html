@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:input="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<form onsubmit="event.preventDefault(); login();">
+    <input type="text" placeholder="Username" id="userName" required><br>
+    <input type="password" placeholder="****" id="password" required><br>
+    <button>Login</button>
+</form>
+<p id="response"></p>
+<script>
+    async function login() {
+        const name = document.getElementById("userName").value;
+        const password = document.getElementById("password").value;
+        const response = await fetch("http://localhost:8080/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                password
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Login failed");
+                }
+                return response.json(); // Parse JSON response
+            })
+            .then(data =>
+            {
+                console.log("Login Success:", data.token);
+                setCookie("token", data.token.trim());
+            })
+            .catch(error => console.error("Error:", error));
+
+        function setCookie(name, value) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + 300 * 1000); // Convert days to milliseconds (300s)
+            document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/`;
+        }
+    }
+</script>
+</body>
+</html>
