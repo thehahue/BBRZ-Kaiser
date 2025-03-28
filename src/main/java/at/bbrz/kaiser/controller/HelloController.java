@@ -33,9 +33,9 @@ public class HelloController {
         }
         try {
             tokenService.validateToken(authHeaderSplit[1]);
-            return ResponseEntity.ok("Verified");
+            return ResponseEntity.ok("{\"status\":\"verified\"}");
         } catch (JWTVerificationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not Verified");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"status\":\"not verified\"}");
         }
     }
 }
