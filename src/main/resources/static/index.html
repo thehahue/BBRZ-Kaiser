@@ -10,8 +10,11 @@
     <input type="password" placeholder="****" id="password" required><br>
     <button>Login</button>
 </form>
+<button onclick="checkToken()">SecureTest</button>
+<button onclick="logout()">Logout</button>
 <p id="response"></p>
 <script>
+    checkToken();
     async function login() {
         const name = document.getElementById("userName").value;
         const password = document.getElementById("password").value;
@@ -37,11 +40,48 @@
                 setCookie("token", data.token.trim());
             })
             .catch(error => console.error("Error:", error));
+        await checkToken();
 
         function setCookie(name, value) {
             const expires = new Date();
             expires.setTime(expires.getTime() + 300 * 1000); // Convert days to milliseconds (300s)
             document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/`;
+        }
+    }
+
+    async function checkToken(){
+        const responseField = document.getElementById("response");
+        let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
+        const response = await fetch("http://localhost:8080/secureTest", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: ""
+        })
+            .then(response => {
+                return response.json(); // Parse JSON response
+            })
+            .then(data =>
+            {
+                responseField.innerText = data.status;
+            })
+            .catch(error => {
+                console.error("Error:", error)
+            });
+    }
+
+    function logout(){
+        if (document.cookie.includes("token")) {
+            deleteCookie("token");
+            checkToken();
+        }
+
+        function deleteCookie(name) {
+            const expires = new Date();
+            expires.setTime(0); // Convert days to milliseconds (300s)
+            document.cookie = `${name}=; expires=${expires.toUTCString()}; path=/`;
         }
     }
 </script>
