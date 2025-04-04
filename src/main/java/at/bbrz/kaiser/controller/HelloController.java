@@ -20,11 +20,6 @@ public class HelloController {
         this.tokenService = tokenService;
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello World!";
-    }
-
     @PostMapping("/secureTest")
     public ResponseEntity<String> secureEndpoint(@RequestHeader("Authorization") String authHeader) {
         String[] authHeaderSplit = authHeader.split(" ");
