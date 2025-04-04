@@ -18,7 +18,7 @@
     async function login() {
         const name = document.getElementById("userName").value;
         const password = document.getElementById("password").value;
-        const response = await fetch("http://localhost:8080/login", {
+        const response = await fetch("/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -53,7 +53,7 @@
     async function checkToken(){
         const responseField = document.getElementById("response");
         let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
-        const response = await fetch("http://localhost:8080/secureTest", {
+        const response = await fetch("/secureTest", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

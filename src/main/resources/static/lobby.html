@@ -18,7 +18,7 @@
             window.location.href = "/";
         }
         let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
-        const response = await fetch("http://localhost:8080/secureTest", {
+        const response = await fetch("/secureTest", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -44,7 +44,7 @@
     }
 
     async function getUsernameFromToken() {
-        const response = await fetch("http://localhost:8080/decodePayload", {
+        const response = await fetch("/decodePayload", {
             method: "GET"
         })
             .then(response => {
