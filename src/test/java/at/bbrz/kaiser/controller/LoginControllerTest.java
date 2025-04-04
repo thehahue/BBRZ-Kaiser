@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = { LoginController.class, TokenService.class, JWTWrapper.class })
 @WebMvcTest(LoginController.class)
@@ -57,7 +57,9 @@ class LoginControllerTest {
         assertTrue(splitToken[1].length() > 5);
         assertTrue(splitToken[2].length() > 5);
         assertEquals("\"message\":\"Login Success\"", result[1]);
-        assertEquals("\"success\":true}", result[2]);
+        assertEquals("\"success\":true", result[2]);
+        assertEquals("\"path\":\"/success.html\"}", result[3]);
+        System.out.println(result);
     }
 
     @Test
@@ -69,6 +71,6 @@ class LoginControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().string("{\"token\":null,\"message\":\"Login failed\",\"success\":false}"));
+                .andExpect(content().string("{\"token\":null,\"message\":\"Login failed\",\"success\":false,\"path\":null}"));
     }
 }

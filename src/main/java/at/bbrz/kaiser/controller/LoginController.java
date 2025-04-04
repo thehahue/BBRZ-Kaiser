@@ -33,6 +33,7 @@ public class LoginController {
                     .token(tokenService.createToken(user.getName(), Instant.now().plusSeconds(300)))
                     .message("Login Success")
                     .success(true)
+                    .path("/success.html")
                     .build();
             return ResponseEntity.ok(response);
         }
