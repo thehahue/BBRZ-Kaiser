@@ -2,6 +2,7 @@ package at.bbrz.kaiser.service;
 
 import at.bbrz.kaiser.exceptions.JWTValidationException;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,5 +93,18 @@ class TokenServiceTest {
         assertThrows(JWTVerificationException.class, () -> {
             tokenService.validateToken(invalidToken);
         });
+    }
+
+    @Test
+    void getUserNameFromToken_returnsUsername() {
+        String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjU3NDE5NDI1ODN9.0xkhKS8VKl-m4meKIEkd6-qXm_OZox1EkvWzNUTphLs";
+        String userNameFromToken = tokenService.getUserNameFromToken(validToken);
+        assertEquals("user", userNameFromToken);
+    }
+
+    @Test
+    void getUserNameFromToken_throwsException() {
+        String tokenWithNullUsername = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6bnVsbCwiZXhwIjoxNzQzNzY0MDQ0fQ.wqMX61nYap_RuBlz-L8lK6QkHUuc4oIoIqqpwpJ20RE";
+        assertThrows(JWTDecodeException.class, () -> tokenService.getUserNameFromToken(tokenWithNullUsername));
     }
 }

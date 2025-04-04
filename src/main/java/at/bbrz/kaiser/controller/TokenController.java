@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @Log
 @RestController
-public class HelloController {
+public class TokenController {
 
     @Autowired
     TokenService tokenService;
 
-    public HelloController(TokenService tokenService) {
+    public TokenController(TokenService tokenService) {
         this.tokenService = tokenService;
     }
 
@@ -36,7 +36,7 @@ public class HelloController {
 
 
     @GetMapping("/decodePayload")
-    public ResponseEntity<PayloadResponse> decodePayload(@CookieValue(value = "token") String token) {
+    public ResponseEntity<PayloadResponse> decodeUsernameFromPayload(@CookieValue(value = "token") String token) {
         String username = tokenService.getUserNameFromToken(token);
         PayloadResponse response = PayloadResponse.builder()
                 .username(username)

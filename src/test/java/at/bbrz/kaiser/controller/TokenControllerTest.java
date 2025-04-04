@@ -1,5 +1,6 @@
 package at.bbrz.kaiser.controller;
 
+import at.bbrz.kaiser.model.PayloadResponse;
 import at.bbrz.kaiser.service.TokenService;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @ExtendWith(MockitoExtension.class)
-@ContextConfiguration(classes = { TokenService.class, HelloController.class })
-@WebMvcTest(HelloController.class)
-class HelloControllerTest {
-    private HelloController helloController;
+@ContextConfiguration(classes = { TokenService.class, TokenController.class })
+@WebMvcTest(TokenController.class)
+class TokenControllerTest {
+    private TokenController tokenController;
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,13 +34,13 @@ class HelloControllerTest {
 
     @BeforeEach
     void setUp() {
-        helloController = new HelloController(tokenService);
+        tokenController = new TokenController(tokenService);
     }
 
     @Test
     void secureEndpointReturnsHeaderWithValidToken() {
         String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDE5NDI1ODN9.q7OZfffwwH_U0k2j6oI1__mTgOw2R6JxNzYTllfQK_Q";
-        ResponseEntity<String> response = helloController.secureEndpoint("Bearer " + validToken);
+        ResponseEntity<String> response = tokenController.secureEndpoint("Bearer " + validToken);
         assertEquals(ResponseEntity.ok("{\"status\":\"verified\"}"), response);
     }
 
@@ -77,4 +78,13 @@ class HelloControllerTest {
                 .header("Authorization", "invalid"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void decodeUserReturns_CorrectResponse() {
+        Mockito.when(tokenService.getUserNameFromToken("validToken")).thenReturn("admin");
+        ResponseEntity<PayloadResponse> payloadResponseResponseEntity = tokenController.decodeUsernameFromPayload("validToken");
+        assertEquals("admin", payloadResponseResponseEntity.getBody().getUsername());
+    }
+
+
 }

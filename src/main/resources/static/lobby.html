@@ -54,6 +54,11 @@
                 document.getElementById("greeting").innerHTML += data.username + "!";
             })
             .catch(error => {
+                alert("Your Token is invalid. Returning to login.")
+                const expires = new Date();
+                expires.setTime(0); // Convert days to milliseconds (300s)
+                document.cookie = `token=; expires=${expires.toUTCString()}; path=/`;
+                window.location.href = "/";
                 console.error("Error:", error)
             });
     }
