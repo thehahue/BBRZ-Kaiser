@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lobby</title>
+</head>
+<body>
+<h1>Lobby</h1>
+<p id="greeting">Hello, </p>
+
+</body>
+<script>
+
+    checkToken();
+
+    async function checkToken() {
+        if (!document.cookie.includes("token")) {
+            window.location.href = "/";
+        }
+        let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
+        const response = await fetch("/secureTest", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: ""
+        })
+            .then(response => {
+                return response.json(); // Parse JSON response
+            })
+            .then(data => {
+                if (data.status !== "verified") {
+                    const expires = new Date();
+                    expires.setTime(0); // Convert days to milliseconds (300s)
+                    document.cookie = `token=; expires=${expires.toUTCString()}; path=/`;
+                    window.location.href = "/";
+                }
+                getUsernameFromToken();
+            })
+            .catch(error => {
+                console.error("Error:", error)
+            });
+    }
+
+    async function getUsernameFromToken() {
+        const response = await fetch("/decodePayload", {
+            method: "GET"
+        })
+            .then(response => {
+                return response.json(); // Parse JSON response
+            })
+            .then(data => {
+                document.getElementById("greeting").innerHTML += data.username + "!";
+            })
+            .catch(error => {
+                console.error("Error:", error)
+            });
+    }
+
+
+</script>
+</html>
