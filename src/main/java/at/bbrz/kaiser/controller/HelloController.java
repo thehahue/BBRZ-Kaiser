@@ -44,12 +44,10 @@ public class HelloController {
 
     @GetMapping("/decodePayload")
     public ResponseEntity<PayloadResponse> decodePayload(@CookieValue(value = "token") String token) {
-        DecodedJWT jwt = JWT.decode(token);
-        String username = jwt.getClaim("username").asString();
+        String username = tokenService.getUserNameFromToken(token);
         PayloadResponse response = PayloadResponse.builder()
                 .username(username)
                 .build();
-
         return ResponseEntity.ok(response);
     }
 }
