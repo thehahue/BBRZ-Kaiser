@@ -40,7 +40,7 @@ class HelloControllerTest {
     void secureEndpointReturnsHeaderWithValidToken() {
         String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDE5NDI1ODN9.q7OZfffwwH_U0k2j6oI1__mTgOw2R6JxNzYTllfQK_Q";
         ResponseEntity<String> response = helloController.secureEndpoint("Bearer " + validToken);
-        assertEquals(ResponseEntity.ok("Verified"), response);
+        assertEquals(ResponseEntity.ok("{\"status\":\"verified\"}"), response);
     }
 
     @Test
@@ -50,7 +50,7 @@ class HelloControllerTest {
         mockMvc.perform(post("/secureTest")
                 .header("Authorization", "Bearer " + validToken))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Verified"));
+                .andExpect(content().string("{\"status\":\"verified\"}"));
     }
 
     @Test
@@ -62,7 +62,7 @@ class HelloControllerTest {
         mockMvc.perform(post("/secureTest")
                         .header("Authorization", "Bearer " + invalidToken))
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().string("Not Verified"));
+                .andExpect(content().string("{\"status\":\"not verified\"}"));
     }
 
     @Test

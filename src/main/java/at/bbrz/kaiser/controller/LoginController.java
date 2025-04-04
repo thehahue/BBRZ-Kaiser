@@ -27,7 +27,7 @@ public class LoginController {
 
     @CrossOrigin
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> tryLoginFromJson(@RequestBody User user) {
+    public ResponseEntity<LoginResponse> tryLogin(@RequestBody User user) {
         if (loginService.couldLoginWith(user.getName(), user.getPassword())) {
             LoginResponse response = LoginResponse.builder()
                     .token(tokenService.createToken(user.getName(), Instant.now().plusSeconds(300)))

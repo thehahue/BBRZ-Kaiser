@@ -40,7 +40,7 @@ class LoginControllerTest {
 
 
     @Test
-    void testTryLoginFromJson_succeeds() throws Exception {
+    void testTryLogin_succeeds() throws Exception {
         User user = new User("testuser", "password");
         Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(true);
 
@@ -61,7 +61,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void testTryLoginFromJson_fails() throws Exception {
+    void testTryLogin_fails() throws Exception {
         User user = new User("testuser", "password");
         Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(false);
 
