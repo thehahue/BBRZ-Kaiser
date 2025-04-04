@@ -38,6 +38,7 @@
             {
                 console.log("Login Success:", data.token);
                 setCookie("token", data.token.trim());
+                window.location.href = data.path;
             })
             .catch(error => console.error("Error:", error));
         await checkToken();
