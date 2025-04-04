@@ -2,9 +2,7 @@ package at.bbrz.kaiser.controller;
 
 import at.bbrz.kaiser.model.PayloadResponse;
 import at.bbrz.kaiser.service.TokenService;
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
