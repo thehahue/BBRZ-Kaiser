@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RoomController {
 
-    private RoomService roomService;
-    private TokenService tokenService;
+    private final RoomService roomService;
+    private final TokenService tokenService;
 
     @Autowired
     public RoomController(RoomService roomService, TokenService tokenService) {
@@ -25,11 +25,11 @@ public class RoomController {
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<RoomResponse> room(@PathVariable String roomId, @CookieValue(value = "token") String token) {
+    public ResponseEntity<RoomResponse> getRoomDetails(@PathVariable String roomId, @CookieValue(value = "token") String token) {
         try {
             tokenService.validateToken(token);
         } catch (JWTVerificationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().build());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().success(false).build());
         }
 
 
@@ -37,6 +37,7 @@ public class RoomController {
                 .uuid(roomId)
                 .name(roomService.findNameById(roomId))
                 .users(roomService.findUsersById(roomId))
+                .success(true)
                 .build());
     }
 }
