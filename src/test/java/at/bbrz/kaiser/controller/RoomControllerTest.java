@@ -1,7 +1,6 @@
 package at.bbrz.kaiser.controller;
 
 import at.bbrz.kaiser.exceptions.RoomNotFoundException;
-import at.bbrz.kaiser.model.Room;
 import at.bbrz.kaiser.service.RoomService;
 import at.bbrz.kaiser.service.TokenService;
 import at.bbrz.kaiser.service.UUIDWrapper;
