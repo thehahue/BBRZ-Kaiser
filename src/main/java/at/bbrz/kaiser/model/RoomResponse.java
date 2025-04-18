@@ -15,5 +15,4 @@ public class RoomResponse {
     private String uuid;
     private String name;
     private List<User> users;
-    private Boolean success;
 }
