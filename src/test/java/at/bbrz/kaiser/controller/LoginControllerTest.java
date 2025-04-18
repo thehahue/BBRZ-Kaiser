@@ -39,7 +39,10 @@ class LoginControllerTest {
 
     @Test
     void testTryLogin_succeeds() throws Exception {
-        User user = new User("testuser", "password");
+        User user = User.builder()
+                .name("testuser")
+                .password("password")
+                .build();
         Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(true);
 
         MvcResult mvcResult = mockMvc.perform(post("/login")
@@ -62,7 +65,10 @@ class LoginControllerTest {
 
     @Test
     void testTryLogin_fails() throws Exception {
-        User user = new User("testuser", "password");
+        User user = User.builder()
+                .name("testuser")
+                .password("password")
+                .build();
         Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(false);
 
         mockMvc.perform(post("/login")

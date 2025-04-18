@@ -21,7 +21,7 @@ public class Room {
     private String uuid;
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "room")
     private List<User> users;
 
 

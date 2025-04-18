@@ -13,4 +13,6 @@ public class User {
     @Id
     private String name;
     private String password;
+    @ManyToOne
+    private Room room;
 }
