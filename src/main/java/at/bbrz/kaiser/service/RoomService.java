@@ -40,4 +40,8 @@ public class RoomService {
 
         return optionalRoom.get().getUsers();
     }
+
+    public void saveRoom(Room room) {
+        roomRepository.save(room);
+    }
 }
