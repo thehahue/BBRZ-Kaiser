@@ -1,10 +1,13 @@
 package at.bbrz.kaiser.controller;
 
 import at.bbrz.kaiser.exceptions.RoomNotFoundException;
+import at.bbrz.kaiser.model.RoomRequest;
+import at.bbrz.kaiser.service.LoginService;
 import at.bbrz.kaiser.service.RoomService;
 import at.bbrz.kaiser.service.TokenService;
 import at.bbrz.kaiser.service.UUIDWrapper;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,11 +47,18 @@ class RoomControllerTest {
     @MockitoBean
     UUIDWrapper uuidWrapper;
 
+    @MockitoBean
+    LoginService loginService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
     String validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjU3NDE5NDI1ODN9.0xkhKS8VKl-m4meKIEkd6-qXm_OZox1EkvWzNUTphLs";
 
     @BeforeEach
     void setUp() {
-        roomController = new RoomController(roomService, tokenService, uuidWrapper);
+        roomController = new RoomController(roomService, tokenService, uuidWrapper, loginService);
     }
 
     @Test
@@ -58,7 +69,7 @@ class RoomControllerTest {
 
         mockMvc.perform(get("/room/roomid").cookie(new Cookie("token", validToken)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"uuid\":\"roomid\",\"name\":\"Room\",\"users\":[]}"));
+                .andExpect(content().string("{\"message\":null,\"uuid\":\"roomid\",\"name\":\"Room\",\"users\":[]}"));
 
     }
 
@@ -87,9 +98,33 @@ class RoomControllerTest {
         String token = "invalid";
 
         Mockito.doThrow(JWTVerificationException.class).when(tokenService).validateToken(token);
-
-        mockMvc.perform(post("/room/createRoom").cookie(new Cookie("token", token)).content("Room"))
+        RoomRequest roomRequest = RoomRequest.builder()
+                .name("Room")
+                .build();
+        mockMvc.perform(post("/room/createRoom")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .cookie(new Cookie("token", token)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createNewRoomWithRoomRequestNullReturnsBadRequest() throws Exception {
+        mockMvc.perform(post("/room/createRoom")
+                .contentType(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("token", validToken)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createNewRoomWithRoomRequestNameNullReturnsBadRequest() throws Exception {
+        RoomRequest roomRequest = RoomRequest.builder().build();
+
+        mockMvc.perform(post("/room/createRoom")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .cookie(new Cookie("token", validToken)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -99,9 +134,18 @@ class RoomControllerTest {
         Mockito.when(roomService.findNameById("roomid")).thenReturn("Room");
         Mockito.when(roomService.findUsersById("roomid")).thenReturn(new ArrayList<>());
 
+        RoomRequest roomRequest = RoomRequest.builder()
+                .roomId("roomId")
+                .name("Room")
+                .build();
 
-        mockMvc.perform(post("/room/createRoom").cookie(new Cookie("token", validToken)).content("Room"))
+        mockMvc.perform(post("/room/createRoom")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .cookie(new Cookie("token", validToken)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"uuid\":\"roomId\",\"name\":\"Room\",\"users\":null}"));
+                .andExpect(content().string("{\"message\":null,\"uuid\":\"roomId\",\"name\":\"Room\",\"users\":null}"));
     }
+
+
 }
