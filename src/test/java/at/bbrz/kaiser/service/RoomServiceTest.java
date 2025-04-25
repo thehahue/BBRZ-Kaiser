@@ -64,4 +64,26 @@ class RoomServiceTest {
         List<User> usersById = roomService.findUsersById(validId);
         assertEquals(users, usersById);
     }
+
+    @Test
+    void findRoomByIDReturnsEmptyOptional() {
+        Mockito.when(roomRepository.findById("invalidID")).thenReturn(Optional.empty());
+
+        assertThrows(RoomNotFoundException.class, () -> roomService.findNameById("invalidID"));
+
+    }
+
+    @Test
+    void findUsersByIDReturnsEmptyOptional() {
+        Mockito.when(roomRepository.findById("invalidID")).thenReturn(Optional.empty());
+
+        assertThrows(RoomNotFoundException.class, () -> roomService.findUsersById("invalidID"));
+    }
+
+    @Test
+    void saveRoomSavesRoom() {
+        Room room1 = new Room();
+        roomService.saveRoom(room);
+        Mockito.verify(roomRepository, Mockito.times(1)).save(room);
+    }
 }
