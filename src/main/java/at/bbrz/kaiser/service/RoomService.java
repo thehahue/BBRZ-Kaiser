@@ -21,7 +21,7 @@ public class RoomService {
     }
 
 
-    public String findNameById(String id){
+    public String findNameById(String id) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
 
         if (optionalRoom.isEmpty()) {
@@ -39,6 +39,16 @@ public class RoomService {
         }
 
         return optionalRoom.get().getUsers();
+    }
+
+    public Room findRoomById(String id) {
+        Optional<Room> optionalRoom = roomRepository.findById(id);
+
+        if (optionalRoom.isEmpty()) {
+            throw new RoomNotFoundException("Room doesn't exist");
+        }
+
+        return optionalRoom.get();
     }
 
     public void saveRoom(Room room) {
