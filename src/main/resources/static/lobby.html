@@ -18,7 +18,7 @@
             window.location.href = "/";
         }
         let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
-        const response = await fetch("/secureTest", {
+        fetch("/secureTest", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -30,11 +30,12 @@
                 return response.json(); // Parse JSON response
             })
             .then(data => {
-                if (data.status !== "verified") {
+                console.log(`'${data.status}'`, data.status.length);
+                if (String(data.status).trim() !== "verified") {
                     const expires = new Date();
                     expires.setTime(0); // Convert days to milliseconds (300s)
                     document.cookie = `token=; expires=${expires.toUTCString()}; path=/`;
-                    window.location.href = "/";
+                    window.location.href = "/index.html";
                 }
                 getUsernameFromToken();
             })
@@ -44,8 +45,12 @@
     }
 
     async function getUsernameFromToken() {
-        const response = await fetch("/decodePayload", {
-            method: "GET"
+        let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
+        fetch("/decodePayload", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
         })
             .then(response => {
                 return response.json(); // Parse JSON response
@@ -58,7 +63,7 @@
                 const expires = new Date();
                 expires.setTime(0); // Convert days to milliseconds (300s)
                 document.cookie = `token=; expires=${expires.toUTCString()}; path=/`;
-                window.location.href = "/";
+                window.location.href = "/index.html";
                 console.error("Error:", error)
             });
     }
