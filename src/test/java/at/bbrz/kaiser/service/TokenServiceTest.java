@@ -51,6 +51,10 @@ class TokenServiceTest {
         JWTValidationException usernameNullException = assertThrows(JWTValidationException.class, () -> tokenService.createToken(null, expiryDate));
         assertTrue(usernameNullException.getMessages().containsAll(messages));
 
+        messages = List.of("Username not valid when creating new JWT.");
+        JWTValidationException usernameEmptyException = assertThrows(JWTValidationException.class, () -> tokenService.createToken("", expiryDate));
+        assertTrue(usernameEmptyException.getMessages().containsAll(messages));
+
         messages = List.of("Expiry date not valid when creating new JWT.");
         JWTValidationException expiryDateNullException = assertThrows(JWTValidationException.class, () -> tokenService.createToken(username, null));
         assertTrue(expiryDateNullException.getMessages().containsAll(messages));
