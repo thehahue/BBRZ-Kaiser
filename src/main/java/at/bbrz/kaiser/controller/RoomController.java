@@ -58,7 +58,7 @@ public class RoomController {
     public ResponseEntity<RoomResponse> createNewRoom(@RequestBody RoomRequest roomRequest, @CookieValue(value = "token") String token) {
         if (!isTokenValid(token))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().build());
-        if (roomRequest == null || roomRequest.getName() == null) {
+        if (roomRequest.getName() == null) {
             return ResponseEntity.badRequest().body(RoomResponse.builder().message("RoomName should not be Null").build());
         }
 
@@ -81,7 +81,7 @@ public class RoomController {
     public ResponseEntity<RoomResponse> joinRoom(@RequestBody RoomRequest roomRequest, @CookieValue(value = "token") String token) {
         if (!isTokenValid(token))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().build());
-        if (roomRequest == null || roomRequest.getRoomId() == null) {
+        if (roomRequest.getRoomId() == null) {
             return ResponseEntity.badRequest().body(RoomResponse.builder().message("RoomID should not be Null").build());
         }
         Room room;
