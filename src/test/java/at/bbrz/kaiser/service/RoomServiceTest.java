@@ -4,7 +4,6 @@ import at.bbrz.kaiser.exceptions.RoomNotFoundException;
 import at.bbrz.kaiser.model.Room;
 import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.repository.RoomRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -106,7 +105,6 @@ class RoomServiceTest {
 
     @Test
     void saveRoomSavesRoom() {
-        Room room1 = new Room();
         roomService.saveRoom(room);
         Mockito.verify(roomRepository, Mockito.times(1)).save(room);
     }
