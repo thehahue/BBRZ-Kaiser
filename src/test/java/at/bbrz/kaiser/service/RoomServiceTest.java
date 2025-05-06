@@ -81,6 +81,30 @@ class RoomServiceTest {
     }
 
     @Test
+    void findRoomById_returnsRoom_whenRoomExists() {
+        String id = "123";
+
+        Mockito.when(roomRepository.findById(id)).thenReturn(Optional.ofNullable(Room.builder()
+                .uuid(id)
+                .build()));
+
+        Room result = roomService.findRoomById(id);
+
+        assertNotNull(result);
+        assertEquals(id, result.getUuid());
+    }
+
+    @Test
+    void findRoomById_shouldThrowException_whenRoomNotFound() {
+        String id = "unknown";
+
+        Mockito.when(roomRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(RoomNotFoundException.class, () -> roomService.findRoomById(id));
+    }
+
+
+    @Test
     void saveRoomSavesRoom() {
         Room room1 = new Room();
         roomService.saveRoom(room);
