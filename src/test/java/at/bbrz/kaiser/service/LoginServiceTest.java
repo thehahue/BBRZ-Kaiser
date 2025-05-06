@@ -1,5 +1,6 @@
 package at.bbrz.kaiser.service;
 
+import at.bbrz.kaiser.exceptions.UserNotFoundException;
 import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -83,6 +86,29 @@ class LoginServiceTest {
 
         canLogin = canLogin(null, "password");
         assertFalse(canLogin);
+    }
+
+    @Test
+    void findByUsername_shouldReturnUser_whenUserExists() {
+        String username = "testuser";
+        User user = User.builder()
+                .name(username)
+                .build();
+
+        Mockito.when(userRepository.findByName(username)).thenReturn(Optional.ofNullable(user));
+
+        User result = loginService.findByUsername(username);
+
+        assertNotNull(result);
+        assertEquals(username, result.getName());
+    }
+
+    @Test
+    void findByUsername_shouldThrowException_whenUserNotFound() {
+        String username = "unknown";
+        Mockito.when(userRepository.findByName(username)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> loginService.findByUsername(username));
     }
 
     private boolean canLogin(String user, String password) {
