@@ -1,7 +1,10 @@
 package at.bbrz.kaiser.controller;
 
 import at.bbrz.kaiser.exceptions.RoomNotFoundException;
+import at.bbrz.kaiser.exceptions.UserNotFoundException;
+import at.bbrz.kaiser.model.Room;
 import at.bbrz.kaiser.model.RoomRequest;
+import at.bbrz.kaiser.model.User;
 import at.bbrz.kaiser.service.LoginService;
 import at.bbrz.kaiser.service.RoomService;
 import at.bbrz.kaiser.service.TokenService;
@@ -25,8 +28,7 @@ import java.util.ArrayList;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = { RoomService.class, RoomController.class, TokenService.class })
@@ -147,5 +149,112 @@ class RoomControllerTest {
                 .andExpect(content().string("{\"message\":null,\"uuid\":\"roomId\",\"name\":\"Room\",\"users\":null}"));
     }
 
+    @Test
+    void joinRoomThatExistsWithValidToken() throws Exception {
+        RoomRequest roomRequest = RoomRequest.builder()
+                .roomId("123")
+                .build();
+        Room room = Room.builder()
+                .name("TestRoom")
+                .uuid("123")
+                .users(new ArrayList<>())
+                .build();
+        User user = User.builder()
+                .name("TestUser")
+                .password("test")
+                .build();
 
+        Mockito.when(tokenService.getUserNameFromToken(validToken)).thenReturn(user.getName());
+        Mockito.when(roomService.findRoomById(room.getUuid())).thenReturn(room);
+        Mockito.when(loginService.findByUsername(user.getName())).thenReturn(user);
+
+        mockMvc.perform((post("/room/join")
+                .contentType(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("token", validToken))
+                .content(objectMapper.writeValueAsString(roomRequest))))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    void joinRoom_shouldReturnUnauthorized_whenTokenInvalid() throws Exception {
+        String token = "invalidToken";
+        RoomRequest roomRequest = RoomRequest.builder()
+                .roomId("123")
+                .build();
+
+        Mockito.doThrow(new JWTVerificationException("Invalid token")).when(tokenService).validateToken(token);
+
+        mockMvc.perform(post("/room/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("token", token))
+                        .content(new ObjectMapper().writeValueAsString(roomRequest)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void joinRoom_shouldReturnBadRequestOnEmptyRoomIdRequest() throws Exception {
+        RoomRequest nullRoomIdRequest = RoomRequest.builder().roomId(null).build();
+        mockMvc.perform(post("/room/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("token", validToken))
+                        .content(new ObjectMapper().writeValueAsString(nullRoomIdRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("RoomID should not be Null"));
+    }
+
+    @Test
+    void joinRoom_shouldReturnBadRequestIfRoomDoesNotExist() throws Exception {
+        RoomRequest roomRequest = RoomRequest.builder()
+                .roomId("123")
+                .build();
+        Room room = Room.builder()
+                .name("TestRoom")
+                .uuid("123")
+                .users(new ArrayList<>())
+                .build();
+        User user = User.builder()
+                .name("TestUser")
+                .password("test")
+                .build();
+
+        Mockito.when(tokenService.getUserNameFromToken(validToken)).thenReturn(user.getName());
+        Mockito.doThrow(RoomNotFoundException.class).when(roomService).findRoomById(roomRequest.getRoomId());
+
+        mockMvc.perform((post("/room/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("token", validToken))
+                        .content(objectMapper.writeValueAsString(roomRequest))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Room doesn't exist."));
+    }
+
+    @Test
+    void joinRoom_shouldReturnBadRequestIfUserDoesNotExist() throws Exception {
+        RoomRequest roomRequest = RoomRequest.builder()
+                .roomId("123")
+                .build();
+        Room room = Room.builder()
+                .name("TestRoom")
+                .uuid("123")
+                .users(new ArrayList<>())
+                .build();
+        User user = User.builder()
+                .name("TestUser")
+                .password("test")
+                .build();
+
+        Mockito.when(tokenService.getUserNameFromToken(validToken)).thenReturn(user.getName());
+        Mockito.when(roomService.findRoomById(room.getUuid())).thenReturn(room);
+        Mockito.doThrow(UserNotFoundException.class).when(loginService).findByUsername(user.getName());
+
+        mockMvc.perform((post("/room/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(new Cookie("token", validToken))
+                        .content(objectMapper.writeValueAsString(roomRequest))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("User doesn't exist."));
+
+
+    }
 }
