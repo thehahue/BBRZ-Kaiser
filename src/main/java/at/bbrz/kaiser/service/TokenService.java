@@ -45,7 +45,7 @@ public class TokenService {
     }
 
     public void validateToken(String token) throws JWTVerificationException {
-        Algorithm algorithm = Algorithm.HMAC256("Kaiser");
+        Algorithm algorithm = Algorithm.HMAC256("Kaiser00000000000000000000000000");
         JWTVerifier verifier = JWT.require(algorithm).build();
         verifier.verify(token);
     }

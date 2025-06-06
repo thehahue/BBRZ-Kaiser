@@ -10,7 +10,7 @@ import java.time.Instant;
 @Service
 public class JWTWrapper {
     public String createJWTToken(String userName, Instant expiryDate) throws JWTCreationException {
-        Algorithm algorithm = Algorithm.HMAC256("Kaiser");
+        Algorithm algorithm = Algorithm.HMAC256("Kaiser00000000000000000000000000");
         return JWT.create()
                 .withHeader("""
                             {

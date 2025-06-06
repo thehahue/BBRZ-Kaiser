@@ -39,7 +39,10 @@ class LoginControllerTest {
 
     @Test
     void testTryLogin_succeeds() throws Exception {
-        User user = new User("testuser", "password");
+        User user = User.builder()
+                .name("testuser")
+                .password("password")
+                .build();
         Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(true);
 
         MvcResult mvcResult = mockMvc.perform(post("/login")
@@ -49,26 +52,28 @@ class LoginControllerTest {
                 .andReturn();
 
         String result[] = mvcResult.getResponse().getContentAsString().split(",");
-        String[] splitToken = result[0].split("\\.");
+        String[] splitToken = result[1].split("\\.");
         assertEquals(3, splitToken.length);
-        assertEquals("{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", splitToken[0]);
+        assertEquals("\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", splitToken[0]);
         assertTrue(splitToken[1].length() > 5);
         assertTrue(splitToken[2].length() > 5);
-        assertEquals("\"message\":\"Login Success\"", result[1]);
+        assertEquals("{\"message\":\"Login Success\"", result[0]);
         assertEquals("\"success\":true", result[2]);
         assertEquals("\"path\":\"/success.html\"}", result[3]);
-        System.out.println(result);
     }
 
     @Test
     void testTryLogin_fails() throws Exception {
-        User user = new User("testuser", "password");
+        User user = User.builder()
+                .name("testuser")
+                .password("password")
+                .build();
         Mockito.when(loginService.couldLoginWith("testuser", "password")).thenReturn(false);
 
         mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().string("{\"token\":null,\"message\":\"Login failed\",\"success\":false,\"path\":null}"));
+                .andExpect(content().string("{\"message\":\"Login failed\",\"token\":null,\"success\":false,\"path\":null}"));
     }
 }

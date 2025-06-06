@@ -1,5 +1,6 @@
 package at.bbrz.kaiser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,4 +14,8 @@ public class User {
     @Id
     private String name;
     private String password;
+    @ManyToOne
+    @Setter
+    @JsonIgnore
+    private Room room;
 }

@@ -77,6 +77,10 @@ class TokenControllerTest {
         mockMvc.perform(post("/secureTest")
                 .header("Authorization", "invalid"))
                 .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/secureTest")
+                .header("Authorization", "invalid token"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
