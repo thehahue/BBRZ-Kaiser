@@ -70,7 +70,6 @@ public class RoomController {
 
         roomService.saveRoom(newRoom);
 
-
         return ResponseEntity.ok(RoomResponse.builder()
                 .uuid(newRoom.getUuid())
                 .name(newRoom.getName())
