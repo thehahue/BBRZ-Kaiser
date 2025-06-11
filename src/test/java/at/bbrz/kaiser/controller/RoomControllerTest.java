@@ -64,7 +64,7 @@ class RoomControllerTest {
     }
 
     @Test
-    void getRoomDetailsWithValidTokenReturnsRoomResponse() throws Exception {
+    void getRoomDetailsWithValidTokenReturnsValidRoomResponse() throws Exception {
         Mockito.when(roomService.findNameById("roomid")).thenReturn("Room");
         Mockito.when(roomService.findUsersById("roomid")).thenReturn(new ArrayList<>());
 
