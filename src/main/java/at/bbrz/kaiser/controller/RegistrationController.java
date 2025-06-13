@@ -21,7 +21,7 @@ public class RegistrationController {
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponse> registerNewUser(@RequestBody User user) {
         try {
-            if (registrationService.couldRegisterWith(user)) {
+                registrationService.couldRegisterWith(user);
                 registrationService.registerUser(user);
                 return ResponseEntity.ok(buildResponse("User sucessfully registered!", true));
         } catch (RuntimeException e) {

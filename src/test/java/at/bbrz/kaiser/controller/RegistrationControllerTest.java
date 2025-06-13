@@ -36,8 +36,9 @@ class RegistrationControllerTest {
     @Test
     void registerNewUser_succeedsWithCode200() throws Exception {
         User user = getValidUser();
-        Mockito.when(registrationService.couldRegisterWith(Mockito.any(User.class)))
-                .thenReturn(true);
+        Mockito.doNothing()
+                .when(registrationService)
+                .couldRegisterWith(user);
         Mockito.doNothing()
                 .when(registrationService)
                 .registerUser(user);
