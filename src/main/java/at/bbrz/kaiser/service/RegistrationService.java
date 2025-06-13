@@ -11,14 +11,13 @@ public class RegistrationService {
     @Autowired
     private UserRepository userRepository;
 
-    public boolean couldRegisterWith(User user) {
+    public void couldRegisterWith(User user) {
         if (user.getName().isEmpty() || user.getPassword().isEmpty()) {
             throw new RuntimeException("Username or Password is empty!");
         }
         if (userRepository.findByName(user.getName()).isPresent()) {
             throw new RuntimeException("Username already taken!");
         }
-        return true;
     }
 
     public void registerUser(User user) {

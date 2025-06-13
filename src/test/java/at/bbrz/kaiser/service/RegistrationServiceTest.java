@@ -23,8 +23,8 @@ class RegistrationServiceTest {
     UserRepository userRepository;
 
     @Test
-    void couldRegisterWith_returnsTrueWithUniqueUsername() {
-        assertTrue(registrationService.couldRegisterWith(getValidUser()));
+    void couldRegisterWith_doesNotThrowWithUniqueUsername() {
+        registrationService.couldRegisterWith(getValidUser());
     }
 
     @Test
