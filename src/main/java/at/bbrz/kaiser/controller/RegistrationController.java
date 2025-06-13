@@ -23,23 +23,18 @@ public class RegistrationController {
         try {
             if (registrationService.couldRegisterWith(user)) {
                 registrationService.registerUser(user);
-                return ResponseEntity.ok(RegistrationResponse.builder()
-                        .message("User sucessfully registered!")
-                        .success(true)
-                        .build());
-            }
+                return ResponseEntity.ok(buildResponse("User sucessfully registered!", true));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(RegistrationResponse.builder()
-                            .message(e.getMessage())
-                            .success(false)
-                            .build());
+                    .body(buildResponse(e.getMessage(), false));
         }
+    }
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(RegistrationResponse.builder()
-                        .message("Something went wrong!")
-                        .success(false)
-                        .build());
+    private RegistrationResponse buildResponse(String message, Boolean success) {
+        return RegistrationResponse.builder()
+                .message(message)
+                .success(success)
+                .build();
+
     }
 }
