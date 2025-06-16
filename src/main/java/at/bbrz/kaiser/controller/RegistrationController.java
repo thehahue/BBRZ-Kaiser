@@ -23,7 +23,7 @@ public class RegistrationController {
         try {
                 registrationService.couldRegisterWith(user);
                 registrationService.registerUser(user);
-                return ResponseEntity.ok(buildResponse("User sucessfully registered!", true));
+                return ResponseEntity.ok(buildResponse("User successfully registered!", true));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(buildResponse(e.getMessage(), false));
