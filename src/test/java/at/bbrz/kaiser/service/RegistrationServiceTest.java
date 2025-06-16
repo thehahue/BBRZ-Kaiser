@@ -37,18 +37,51 @@ class RegistrationServiceTest {
                 .name("name")
                 .password("")
                 .build();
-        assertThrows(RuntimeException.class, () -> {registrationService.couldRegisterWith(userNullName);});
-        assertThrows(RuntimeException.class, () -> {registrationService.couldRegisterWith(userNullPassword);});
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(userNullName));
+        assertEquals("Username or Password is empty!", runtimeException.getMessage());
+        RuntimeException runtimeException1 = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(userNullPassword));
+        assertEquals("Username or Password is empty!", runtimeException1.getMessage());
     }
 
     @Test
     void couldRegisterWith_throwsExceptionIfUsernameIsTaken() {
-        User user = getValidUser();
-        Mockito.when(userRepository.findByName(user.getName())).thenReturn(Optional.of(user));
-        assertThrows(RuntimeException.class, () -> {
-            registrationService.couldRegisterWith(user);
-        });
+        User user = User.builder()
+                .name("taken")
+                .password("password")
+                .build();
+        Mockito.when(userRepository.findByName("taken")).thenReturn(Optional.of(user));
+        RuntimeException usernameTakenException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(user));
+        assertEquals("Username already taken!", usernameTakenException.getMessage());
     }
+
+    @Test
+    void couldRegisterWith_throwsExceptionIfPasswordIsInvalidLength() {
+        User tooShort = User.builder()
+                .name("user")
+                .password("123")
+                .build();
+        User tooLong = User.builder()
+                .name("user")
+                .password("123456789abcdefghijklmnopqrstuvwxyz")
+                .build();
+
+        RuntimeException tooShortException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(tooShort));
+        assertEquals("Password length is invalid! (has to be between 7 and 32 characters)", tooShortException.getMessage());
+        RuntimeException tooLongExcpetion = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(tooLong));
+        assertEquals("Password length is invalid! (has to be between 7 and 32 characters)", tooLongExcpetion.getMessage());
+    }
+
+    @Test
+    void couldRegisterWith_throwsExceptionIfUsernameIsTooLong() {
+        User user = User.builder()
+                .name("abcdefghijklmnopq")
+                .password("password")
+                .build();
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(user));
+        assertEquals("Username is too long! (max 16 characters)", runtimeException.getMessage());
+    }
+
 
     @Test
     void registerUser_SavesUser() {

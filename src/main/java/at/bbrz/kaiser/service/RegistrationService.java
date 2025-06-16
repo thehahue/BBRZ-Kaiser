@@ -12,11 +12,19 @@ public class RegistrationService {
     private UserRepository userRepository;
 
     public void couldRegisterWith(User user) {
-        if (user.getName().isEmpty() || user.getPassword().isEmpty()) {
+        String name = user.getName().trim();
+        String password = user.getPassword().trim();
+        if (name.isEmpty() || password.isEmpty()) {
             throw new RuntimeException("Username or Password is empty!");
         }
-        if (userRepository.findByName(user.getName()).isPresent()) {
+        if (userRepository.findByName(name.toLowerCase()).isPresent()) {
             throw new RuntimeException("Username already taken!");
+        }
+        if (password.length() <= 6 || password.length() > 32) {
+            throw new RuntimeException("Password length is invalid! (has to be between 7 and 32 characters)");
+        }
+        if (name.length() > 16) {
+            throw new RuntimeException("Username is too long! (max 16 characters)");
         }
     }
 
