@@ -51,6 +51,10 @@ public class RoomService {
         return optionalRoom.get();
     }
 
+    public List<Room> getAllRooms() {
+        return roomRepository.findAll();
+    }
+
     public void saveRoom(Room room) {
         roomRepository.save(room);
     }
