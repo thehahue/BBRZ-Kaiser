@@ -9,19 +9,25 @@
 
 <table>
     <thead>
-        <tr>
-            <th>GameName</th>
-            <th>Players</th>
-        </tr>
+    <tr>
+        <th>GameName</th>
+        <th>Players</th>
+    </tr>
     </thead>
     <tbody>
-        <tr th:each="room : ${rooms}" border="1">
-            <td th:text="${room.name}">Room Name</td>
-            <td th:text="${room.playerCount} + '/' + '8'">0</td>
-        </tr>
-
+    <tr th:each="room : ${rooms}" border="1">
+        <td th:text="${room.name}">Room Name</td>
+        <td th:text="${room.playerCount} + '/' + '8'">0</td>
+    </tr>
     </tbody>
 </table>
+<dialog id="createRoomDialog">
+    <label for="roomName">Roomname:</label><br>
+    <input type="text" placeholder="Roomname" id="roomName"><br>
+    <button onclick="createRoomDialog.close()">Cancel</button>
+    <button onclick="createNewRoom()">Create Room</button>
+</dialog>
+<button onclick="createRoomDialog.showModal()">Create new Room</button>
 </body>
 <script>
 
@@ -50,11 +56,36 @@
                     document.cookie = `token=; expires=${expires.toUTCString()}; path=/`;
                     window.location.href = "/";
                 }
-                getUsernameFromToken();
             })
             .catch(error => {
                 console.error("Error:", error)
             });
+    }
+
+    async function createNewRoom() {
+        if (!document.cookie.includes("token")) {
+            window.location.href = "/";
+        }
+        let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
+        let roomName = document.getElementById("roomName").value;
+        const response = await fetch("/room/createRoom", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                "name": roomName
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById("createRoomDialog").close();
+                    location.reload();
+                }
+
+                console.log(response);
+            })
     }
 
 
