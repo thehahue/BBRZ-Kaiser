@@ -1,13 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Lobby</title>
 </head>
 <body>
 <h1>Lobby</h1>
-<p id="greeting">Hello, </p>
 
+<table>
+    <thead>
+        <tr>
+            <th>GameName</th>
+            <th>Players</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="room : ${rooms}" border="1">
+            <td th:text="${room.name}">Room Name</td>
+            <td th:text="${room.playerCount} + '/' + '8'">0</td>
+        </tr>
+
+    </tbody>
+</table>
 </body>
 <script>
 
@@ -39,26 +53,6 @@
                 getUsernameFromToken();
             })
             .catch(error => {
-                console.error("Error:", error)
-            });
-    }
-
-    async function getUsernameFromToken() {
-        const response = await fetch("/decodePayload", {
-            method: "GET"
-        })
-            .then(response => {
-                return response.json(); // Parse JSON response
-            })
-            .then(data => {
-                document.getElementById("greeting").innerHTML += data.username + "!";
-            })
-            .catch(error => {
-                alert("Your Token is invalid. Returning to login.")
-                const expires = new Date();
-                expires.setTime(0); // Convert days to milliseconds (300s)
-                document.cookie = `token=; expires=${expires.toUTCString()}; path=/`;
-                window.location.href = "/";
                 console.error("Error:", error)
             });
     }
