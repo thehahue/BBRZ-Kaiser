@@ -38,6 +38,12 @@
 </body>
 <script>
 
+    document.getElementById("roomName").addEventListener("keyup", event => {
+        if(event.key !== "Enter") return;
+        createNewRoom();
+        event.preventDefault();
+    });
+
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".join-button").forEach(button => {
             button.addEventListener("click", async () => {
