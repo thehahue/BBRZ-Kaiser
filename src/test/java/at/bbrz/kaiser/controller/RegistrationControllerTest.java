@@ -47,7 +47,7 @@ class RegistrationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("User sucessfully registered!"));
+                .andExpect(jsonPath("$.message").value("User successfully registered!"));
     }
 
     @Test
