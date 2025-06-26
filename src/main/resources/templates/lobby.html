@@ -73,7 +73,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     console.log("Joined room:", data);
-                    // Maybe redirect or show a success message
+                    window.location.href = "/room/" + roomId;
                 } else {
                     const error = await response.json();
                     alert("Error: " + error.message);
@@ -99,12 +99,12 @@
             body: ""
         })
             .then(response => {
-                return response.json(); // Parse JSON response
+                return response.json();
             })
             .then(data => {
                 if (data.status !== "verified") {
                     const expires = new Date();
-                    expires.setTime(0); // Convert days to milliseconds (300s)
+                    expires.setTime(0);
                     document.cookie = `token=; expires=${expires.toUTCString()}; path=/`;
                     window.location.href = "/";
                 }
@@ -138,36 +138,6 @@
 
                 console.log(response);
             })
-    }
-
-    async function joinRoom(roomId) {
-        const token = document.cookie
-            .split("; ")
-            .find(row => row.startsWith("token="))
-            ?.split("=")[1];
-
-        if (!token) {
-            window.location.href = "/";
-            return;
-        }
-
-        const response = await fetch("/room/join", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token  // Optional unless required by your security filter
-            },
-            body: JSON.stringify({roomId: roomId})
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Joined room:", data);
-            location.reload(); // or navigate to the game
-        } else {
-            const err = await response.json();
-            alert("Join failed: " + err.message);
-        }
     }
 
 
