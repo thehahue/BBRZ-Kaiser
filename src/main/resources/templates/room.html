@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Room</title>
+</head>
+<body>
+
+<h1 th:text="'Room: ' + ${room.name}">Room: Nameless</h1>
+
+<h2>Players</h2>
+<table>
+    <tr>
+        <th>Username</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.username}">User</td>
+    </tr>
+</table>
+
+</body>
+</html>
