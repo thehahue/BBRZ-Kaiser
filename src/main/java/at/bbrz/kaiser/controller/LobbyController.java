@@ -19,7 +19,7 @@ public class LobbyController {
     @GetMapping("/lobby")
     public String loadLobby(Model model) {
         List<RoomDto> rooms = roomService.getAllRooms().stream()
-                .map(room -> new RoomDto(room.getName(), room.getUsers().size()))
+                .map(room -> new RoomDto(room.getName(), room.getUsers().size(), room.getUuid()))
                 .toList();
 
         model.addAttribute("rooms", rooms);
