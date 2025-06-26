@@ -140,6 +140,36 @@
             })
     }
 
+    async function joinRoom(roomId) {
+        const token = document.cookie
+            .split("; ")
+            .find(row => row.startsWith("token="))
+            ?.split("=")[1];
+
+        if (!token) {
+            window.location.href = "/";
+            return;
+        }
+
+        const response = await fetch("/room/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token  // Optional unless required by your security filter
+            },
+            body: JSON.stringify({roomId: roomId})
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Joined room:", data);
+            location.reload(); // or navigate to the game
+        } else {
+            const err = await response.json();
+            alert("Join failed: " + err.message);
+        }
+    }
+
 
 </script>
 </html>
