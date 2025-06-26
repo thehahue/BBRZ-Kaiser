@@ -18,6 +18,13 @@
     <tr th:each="room : ${rooms}" border="1">
         <td th:text="${room.name}">Room Name</td>
         <td th:text="${room.playerCount} + '/' + '8'">0</td>
+        <td>
+            <button type="button"
+                    class="join-button"
+                    th:attr="data-roomid=${room.roomId}">
+                Join
+            </button>
+        </td>
     </tr>
     </tbody>
 </table>
@@ -30,6 +37,44 @@
 <button onclick="createRoomDialog.showModal()">Create new Room</button>
 </body>
 <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".join-button").forEach(button => {
+            button.addEventListener("click", async () => {
+                const roomId = button.getAttribute("data-roomid");
+                const token = document.cookie
+                    .split("; ")
+                    .find(row => row.startsWith("token="))
+                    ?.split("=")[1];
+
+                if (!token) {
+                    window.location.href = "/";
+                    return;
+                }
+
+                const response = await fetch("/room/join", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({
+                        roomId: roomId
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Joined room:", data);
+                    // Maybe redirect or show a success message
+                } else {
+                    const error = await response.json();
+                    alert("Error: " + error.message);
+                }
+            });
+        });
+    });
+
 
     checkToken();
 
