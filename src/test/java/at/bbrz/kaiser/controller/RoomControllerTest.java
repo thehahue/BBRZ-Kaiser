@@ -69,7 +69,7 @@ class RoomControllerTest {
         Mockito.when(roomService.findUsersById("roomid")).thenReturn(new ArrayList<>());
 
 
-        mockMvc.perform(get("/room/roomid").cookie(new Cookie("token", validToken)))
+        mockMvc.perform(get("/room/info/roomid").cookie(new Cookie("token", validToken)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("{\"message\":null,\"uuid\":\"roomid\",\"name\":\"Room\",\"users\":[]}"));
 
@@ -81,7 +81,7 @@ class RoomControllerTest {
 
         Mockito.doThrow(JWTVerificationException.class).when(tokenService).validateToken(token);
 
-        mockMvc.perform(get("/room/roomid").cookie(new Cookie("token", token)))
+        mockMvc.perform(get("/room/info/roomid").cookie(new Cookie("token", token)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -91,7 +91,7 @@ class RoomControllerTest {
 
         Mockito.doThrow(RoomNotFoundException.class).when(roomService).findNameById(roomId);
 
-        mockMvc.perform(get("/room/" + roomId).cookie(new Cookie("token", validToken)))
+        mockMvc.perform(get("/room/info/" + roomId).cookie(new Cookie("token", validToken)))
                 .andExpect(status().isBadRequest());
     }
 

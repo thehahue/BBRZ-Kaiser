@@ -14,6 +14,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class RoomController {
         this.loginService = loginService;
     }
 
-    @GetMapping("/room/{roomId}")
+    @GetMapping("/room/info/{roomId}")
     public ResponseEntity<RoomResponse> getRoomDetails(@PathVariable String roomId, @CookieValue(value = "token") String token) {
         if (!isTokenValid(token))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().build());
@@ -107,6 +108,16 @@ public class RoomController {
                 .name(room.getName())
                 .users(room.getUsers())
                 .build());
+    }
+
+    @GetMapping("/room/{roomId}")
+    public String loadRoom(@PathVariable String roomId, Model model) {
+        Room room = roomService.findRoomById(roomId);
+        model.addAttribute("room", room);
+        model.addAttribute("users", room.getUsers());
+
+
+        return "room";
     }
 
     private boolean isTokenValid(String token) {
