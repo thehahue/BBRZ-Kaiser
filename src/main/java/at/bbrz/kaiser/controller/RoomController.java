@@ -110,16 +110,6 @@ public class RoomController {
                 .build());
     }
 
-    @GetMapping("/room/{roomId}")
-    public String loadRoom(@PathVariable String roomId, Model model) {
-        Room room = roomService.findRoomById(roomId);
-        model.addAttribute("room", room);
-        model.addAttribute("users", room.getUsers());
-
-
-        return "room";
-    }
-
     private boolean isTokenValid(String token) {
         try {
             tokenService.validateToken(token);

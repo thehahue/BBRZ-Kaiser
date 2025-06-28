@@ -29,5 +29,13 @@ public class PageController {
         return "lobby";
     }
 
+    @GetMapping("/room/{roomId}")
+    public String loadRoom(@PathVariable String roomId, Model model) {
+        Room room = roomService.findRoomById(roomId);
+        List<User> users = room.getUsers();
+        model.addAttribute("room", room);
+        model.addAttribute("users", users);
+        return "room";
+    }
 
 }
