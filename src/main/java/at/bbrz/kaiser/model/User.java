@@ -18,4 +18,11 @@ public class User {
     @Setter
     @JsonIgnore
     private Room room;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }
