@@ -45,6 +45,28 @@
         event.preventDefault();
     });
 
+    async function joinRoom(token, roomId) {
+        const response = await fetch("/room/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                roomId: roomId
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Joined room:", data);
+            window.location.href = "/room/" + roomId;
+        } else {
+            const error = await response.json();
+            alert("Error: " + error.message);
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".join-button").forEach(button => {
             button.addEventListener("click", async () => {
@@ -58,26 +80,7 @@
                     window.location.href = "/";
                     return;
                 }
-
-                const response = await fetch("/room/join", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
-                    },
-                    body: JSON.stringify({
-                        roomId: roomId
-                    })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log("Joined room:", data);
-                    window.location.href = "/room/" + roomId;
-                } else {
-                    const error = await response.json();
-                    alert("Error: " + error.message);
-                }
+                await joinRoom(token, roomId);
             });
         });
     });
