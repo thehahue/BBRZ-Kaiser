@@ -6,13 +6,11 @@ import at.bbrz.kaiser.model.Room;
 import at.bbrz.kaiser.model.RoomRequest;
 import at.bbrz.kaiser.model.RoomResponse;
 import at.bbrz.kaiser.model.User;
-import at.bbrz.kaiser.service.LoginService;
-import at.bbrz.kaiser.service.RoomService;
-import at.bbrz.kaiser.service.TokenService;
-import at.bbrz.kaiser.service.UUIDWrapper;
+import at.bbrz.kaiser.service.*;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +23,15 @@ public class RoomController {
     private final RoomService roomService;
     private final TokenService tokenService;
     private final LoginService loginService;
+    private final UserService userService;
 
     @Autowired
-    public RoomController(RoomService roomService, TokenService tokenService, UUIDWrapper uuidWrapper, LoginService loginService) {
+    public RoomController(RoomService roomService, TokenService tokenService, UUIDWrapper uuidWrapper, LoginService loginService, UserService userService) {
         this.uuidWrapper = uuidWrapper;
         this.roomService = roomService;
         this.tokenService = tokenService;
         this.loginService = loginService;
+        this.userService = userService;
     }
 
     @GetMapping("/room/info/{roomId}")
@@ -59,7 +59,8 @@ public class RoomController {
         if (!isTokenValid(token))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().build());
         if (roomRequest.getName() == null) {
-            return ResponseEntity.badRequest().body(RoomResponse.builder().message("RoomName should not be Null").build());
+            return ResponseEntity.badRequest()
+                    .body(RoomResponse.builder().message("RoomName should not be Null").build());
         }
 
         Room newRoom = Room.builder()
@@ -81,7 +82,8 @@ public class RoomController {
         if (!isTokenValid(token))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().build());
         if (roomRequest.getRoomId() == null) {
-            return ResponseEntity.badRequest().body(RoomResponse.builder().message("RoomID should not be Null").build());
+            return ResponseEntity.badRequest()
+                    .body(RoomResponse.builder().message("RoomID should not be Null").build());
         }
         Room room;
         User user;
@@ -106,6 +108,39 @@ public class RoomController {
         return ResponseEntity.ok(RoomResponse.builder()
                 .name(room.getName())
                 .users(room.getUsers())
+                .build());
+    }
+
+    @PostMapping("/room/leave")
+    public ResponseEntity<RoomResponse> leaveRoom(@RequestBody RoomRequest roomRequest, @CookieValue(value = "token") String token) {
+        if (!isTokenValid(token))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(RoomResponse.builder().build());
+        if (roomRequest.getRoomId() == null)
+            return ResponseEntity.badRequest()
+                    .body(RoomResponse.builder().message("RoomID should not be Null").build());
+
+        Room room;
+        User user;
+        try {
+            room = roomService.findRoomById(roomRequest.getRoomId());
+            user = loginService.findByUsername(tokenService.getUserNameFromToken(token));
+        } catch (RoomNotFoundException exception) {
+            return ResponseEntity.badRequest().body(RoomResponse.builder()
+                    .message("Room doesn't exist.")
+                    .build());
+        } catch (UserNotFoundException exception) {
+            return ResponseEntity.badRequest().body(RoomResponse.builder()
+                    .message("User doesn't exist.")
+                    .build());
+        }
+
+        user.setRoom(null);
+
+        userService.saveUser(user);
+
+        return ResponseEntity.ok().body(RoomResponse.builder()
+                .message(user.getName() + " left the room")
+                .uuid(room.getUuid())
                 .build());
     }
 
