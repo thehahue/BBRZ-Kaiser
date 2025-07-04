@@ -136,7 +136,12 @@
             .then(response => {
                 if (response.ok) {
                     document.getElementById("createRoomDialog").close();
-                    location.reload();
+                    response.json()
+                        .then(data => {
+                            roomId = data.uuid;
+                            console.log(roomId)
+                            joinRoom(token, roomId);
+                        })
                 }
 
                 console.log(response);
