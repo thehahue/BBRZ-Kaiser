@@ -14,17 +14,17 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class RegistrationServiceTest {
+class UserServiceTest {
 
     @InjectMocks
-    RegistrationService registrationService;
+    UserService userService;
 
     @Mock
     UserRepository userRepository;
 
     @Test
     void couldRegisterWith_doesNotThrowWithUniqueUsername() {
-        registrationService.couldRegisterWith(getValidUser());
+        userService.couldRegisterWith(getValidUser());
     }
 
     @Test
@@ -37,9 +37,9 @@ class RegistrationServiceTest {
                 .name("name")
                 .password("")
                 .build();
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(userNullName));
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> userService.couldRegisterWith(userNullName));
         assertEquals("Username or Password is empty!", runtimeException.getMessage());
-        RuntimeException runtimeException1 = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(userNullPassword));
+        RuntimeException runtimeException1 = assertThrows(RuntimeException.class, () -> userService.couldRegisterWith(userNullPassword));
         assertEquals("Username or Password is empty!", runtimeException1.getMessage());
     }
 
@@ -50,7 +50,7 @@ class RegistrationServiceTest {
                 .password("password")
                 .build();
         Mockito.when(userRepository.findByName("taken")).thenReturn(Optional.of(user));
-        RuntimeException usernameTakenException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(user));
+        RuntimeException usernameTakenException = assertThrows(RuntimeException.class, () -> userService.couldRegisterWith(user));
         assertEquals("Username already taken!", usernameTakenException.getMessage());
     }
 
@@ -65,9 +65,9 @@ class RegistrationServiceTest {
                 .password("123456789abcdefghijklmnopqrstuvwxyz")
                 .build();
 
-        RuntimeException tooShortException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(tooShort));
+        RuntimeException tooShortException = assertThrows(RuntimeException.class, () -> userService.couldRegisterWith(tooShort));
         assertEquals("Password length is invalid! (has to be between 7 and 32 characters)", tooShortException.getMessage());
-        RuntimeException tooLongExcpetion = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(tooLong));
+        RuntimeException tooLongExcpetion = assertThrows(RuntimeException.class, () -> userService.couldRegisterWith(tooLong));
         assertEquals("Password length is invalid! (has to be between 7 and 32 characters)", tooLongExcpetion.getMessage());
     }
 
@@ -78,7 +78,7 @@ class RegistrationServiceTest {
                 .password("password")
                 .build();
 
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> registrationService.couldRegisterWith(user));
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> userService.couldRegisterWith(user));
         assertEquals("Username is too long! (max 16 characters)", runtimeException.getMessage());
     }
 
@@ -86,7 +86,14 @@ class RegistrationServiceTest {
     @Test
     void registerUser_SavesUser() {
         User user = getValidUser();
-        registrationService.registerUser(user);
+        userService.registerUser(user);
+        Mockito.verify(userRepository, Mockito.times(1)).save(user);
+    }
+
+    @Test
+    void saveUser_SavesUser() {
+        User user = getValidUser();
+        userService.registerUser(user);
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
 

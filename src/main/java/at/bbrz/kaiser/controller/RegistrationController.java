@@ -2,7 +2,7 @@ package at.bbrz.kaiser.controller;
 
 import at.bbrz.kaiser.model.RegistrationResponse;
 import at.bbrz.kaiser.model.User;
-import at.bbrz.kaiser.service.RegistrationService;
+import at.bbrz.kaiser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegistrationController {
 
     @Autowired
-    private RegistrationService registrationService;
+    private UserService userService;
 
     @CrossOrigin
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponse> registerNewUser(@RequestBody User user) {
         try {
-                registrationService.couldRegisterWith(user);
-                registrationService.registerUser(user);
+                userService.couldRegisterWith(user);
+                userService.registerUser(user);
                 return ResponseEntity.ok(buildResponse("User successfully registered!", true));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

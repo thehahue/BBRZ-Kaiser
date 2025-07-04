@@ -1,7 +1,7 @@
 package at.bbrz.kaiser.controller;
 
 import at.bbrz.kaiser.model.User;
-import at.bbrz.kaiser.service.RegistrationService;
+import at.bbrz.kaiser.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@ContextConfiguration(classes = {RegistrationService.class, RegistrationController.class})
+@ContextConfiguration(classes = {UserService.class, RegistrationController.class})
 @WebMvcTest(RegistrationController.class)
 class RegistrationControllerTest {
 
@@ -28,7 +28,7 @@ class RegistrationControllerTest {
     MockMvc mockMvc;
 
     @MockitoBean
-    RegistrationService registrationService;
+    UserService userService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -37,10 +37,10 @@ class RegistrationControllerTest {
     void registerNewUser_succeedsWithCode200() throws Exception {
         User user = getValidUser();
         Mockito.doNothing()
-                .when(registrationService)
+                .when(userService)
                 .couldRegisterWith(user);
         Mockito.doNothing()
-                .when(registrationService)
+                .when(userService)
                 .registerUser(user);
 
         mockMvc.perform(post("/register")
@@ -55,10 +55,10 @@ class RegistrationControllerTest {
         User userNameAlreadyTaken = getValidUser();
 
         Mockito.doThrow(new RuntimeException("Username already taken!"))
-                .when(registrationService)
+                .when(userService)
                 .couldRegisterWith(Mockito.any(User.class));
         Mockito.doNothing()
-                .when(registrationService)
+                .when(userService)
                 .registerUser(userNameAlreadyTaken);
 
 
