@@ -108,4 +108,10 @@ class RoomServiceTest {
         roomService.saveRoom(room);
         Mockito.verify(roomRepository, Mockito.times(1)).save(room);
     }
+
+    @Test
+    void getAllRoomsGetsEverything() {
+        roomService.getAllRooms();
+        Mockito.verify(roomRepository, Mockito.times(1)).findAll();
+    }
 }
