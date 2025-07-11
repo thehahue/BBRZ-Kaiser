@@ -58,4 +58,8 @@ public class RoomService {
     public void saveRoom(Room room) {
         roomRepository.save(room);
     }
+
+    public void deleteRoom(Room room) {
+        roomRepository.deleteById(room.getUuid());
+    }
 }
