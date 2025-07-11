@@ -93,7 +93,7 @@ class UserServiceTest {
     @Test
     void saveUser_SavesUser() {
         User user = getValidUser();
-        userService.registerUser(user);
+        userService.saveUser(user);
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
 
