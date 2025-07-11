@@ -17,7 +17,34 @@
         <td th:text="${user.name}">User</td>
     </tr>
 </table>
-<button disabled>Leave Game</button>
-<button disabled>Start Game</button>
+        th:onclick="leaveRoom(roomId)">
+    Leave Game
+</button>
+<button id="startGame" disabled>Start Game</button>
 </body>
+<script th:inline="javascript">
+    let roomId = [[${room.uuid}]];
+</script>
+<script>
+    async function leaveRoom(roomId) {
+        if (!document.cookie.includes("token")) {
+            window.location.href = "/";
+        }
+        let token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
+        const response = await fetch("/room/leave", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                roomId
+            })
+        })
+        window.location.href = "/lobby";
+    }
+
+</script>
+
+
 </html>
