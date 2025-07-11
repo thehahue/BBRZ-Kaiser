@@ -137,6 +137,9 @@ public class RoomController {
         user.setRoom(null);
 
         userService.saveUser(user);
+        if (room.getUsers().isEmpty()) {
+            roomService.deleteRoom(room);
+        }
 
         return ResponseEntity.ok().body(RoomResponse.builder()
                 .message(user.getName() + " left the room")
